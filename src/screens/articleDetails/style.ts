@@ -39,4 +39,18 @@ export default StyleSheet.create({
     description:{
         fontFamily:fonts.CairoLight 
     },
+    addToFavBtn:{
+        backgroundColor:'gold',
+        padding:10,
+        borderRadius:10,
+        marginBottom:20,
+        width:'100%',
+        alignItems:'center',
+        justifyContent:'center'
+
+    },
+    addToFavText:{
+        color:'#000',
+        fontFamily:fonts.CairoBold
+    }
 })
