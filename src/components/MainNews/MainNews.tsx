@@ -30,7 +30,7 @@ export default function MainNews() {
   }
 
   function gotoArticlesDetails(article: ArticleType) {
-    navigate(ScreenNames.ArticleDetails, { article }); // ✅ بعت المقالة صح
+    navigate(ScreenNames.ArticleDetails, { article }); 
   }
 
   function renderNews(item: ArticleType) {
@@ -80,4 +80,4 @@ export default function MainNews() {
       </TouchableOpacity>
     </View>
   );
-}
+} 
