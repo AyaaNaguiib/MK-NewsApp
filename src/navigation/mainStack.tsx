@@ -7,29 +7,31 @@ import AuthStack from "./stacks/auth.stack";
 import MainTabs from "./stacks/tabs/MainTabs";
 import ArticleDetails from "../screens/articleDetails/articleDetails";
 
-
 const Stack = createStackNavigator<MainStackParamList>();
 
 export default function MainStack() {
   return (
-      <Stack.Navigator screenOptions={{
+    <Stack.Navigator
+      screenOptions={{
         headerShown: false,
-      }}>
-         <Stack.Screen name={StackNames.AuthStack} component={AuthStack} />
-         <Stack.Screen name={StackNames.MainTabs} component={MainTabs} />
-         <Stack.Screen 
-  name={ScreenNames.ArticleDetails} 
-  component={ArticleDetails} 
-/>
+      }}
+    >
+      <Stack.Screen name={StackNames.AuthStack} component={AuthStack} />
 
-      </Stack.Navigator>
- 
+      <Stack.Screen name={StackNames.MainTabs} component={MainTabs} />
+
+      <Stack.Screen
+        name={ScreenNames.ArticleDetails}
+        component={ArticleDetails}
+      />
+    </Stack.Navigator>
   );
 }
-export type MainStackParamList ={
-  [StackNames.AuthStack]:undefined,
+
+export type MainStackParamList = {
+  [StackNames.AuthStack]: undefined;
   [StackNames.MainTabs]: {
-    article: ArticleType
-  },
+    article: ArticleType;
+  };
   [ScreenNames.ArticleDetails]: { article: ArticleType };
-} 
+};
