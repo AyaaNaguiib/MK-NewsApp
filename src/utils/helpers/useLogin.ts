@@ -3,7 +3,6 @@ import { useMutation } from "@tanstack/react-query";
 type LoginPayload = {
   mobile: string;
   password: string;
-  device_type: string;
 };
 
 async function loginFn(payload: LoginPayload) {
