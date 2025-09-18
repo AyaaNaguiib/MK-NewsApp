@@ -1,4 +1,3 @@
- //+201117777777
 import { View, Text } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
@@ -11,6 +10,7 @@ import FormInput from '../../components/formInput/FormInput';
 import LoginBtn from '../../components/btn/LoginButton';
 import React from 'react';
 import Toast from 'react-native-toast-message';
+import { saveUserData, getUserData } from '../../utils/helpers/storage'; 
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string()
@@ -26,19 +26,29 @@ const LoginSchema = Yup.object().shape({
 export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
   const { mutate: login, isPending } = useLogin(
-    data => {
-      console.log('Login success:', data);
-      navigation.navigate(StackNames.MainTabs);
+    async data => {
+      try {
+        console.log("API response:", data);
+
+        await saveUserData({
+          mobile: data.mobile,
+          password: data.password,
+        });
+        const storedUser = await getUserData();
+        console.log("Stored user in AsyncStorage:", storedUser);
+
+        navigation.navigate(StackNames.MainTabs);
+      } catch (err) {
+        console.log('Storage error:', err);
+      }
     },
     err => {
-      console.log('Login error:', err.message);
-
       Toast.show({
         type: 'error',
         text1: 'Login Failed',
         text2: err.message,
-        position: 'bottom', 
-         visibilityTime: 4000,
+        position: 'bottom',
+        visibilityTime: 4000,
       });
     },
   );
@@ -54,16 +64,7 @@ export default function LoginScreen() {
           login({ mobile: values.username, password: values.password });
         }}
       >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-          dirty,
-        }) => (
+        {({handleChange,handleBlur,handleSubmit,values,errors,touched,isValid,dirty, }) => (
           <>
             <View style={styles.formCont}>
               <FormInput

@@ -3,6 +3,7 @@ enum ScreenNames{
      ArticleDetails ='ArticleDetails',
      LoginScreen = 'LoginScreen',
      FavArticleScreen = 'FavArticle',
-     Login = "Login"
+     Login = "Login",
+     MainTabs = "MainTabs"
 }
 export default ScreenNames;

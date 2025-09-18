@@ -1,30 +1,26 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export async function saveUserData(data:any){
-    try{
-        await AsyncStorage.setItem('userData', JSON.stringify(data));
-    } catch(e){
-        console.log('save error:',e)
-    }
-}
+const USER_DATA_KEY = 'userData';
 
 
-export async function getUserData(){
-    try{
-        const json = await AsyncStorage.getItem('userData');
-        return json? JSON.parse(json):null;
-    
-    } catch(e){
-        console.log('load error:',e);
-        return null;
-    }
-}
+export const saveUserData = async (data: any) => {
+  try {
+    await AsyncStorage.setItem(USER_DATA_KEY, JSON.stringify(data));
+  } catch (err) {
+    console.log('Error saving user data:', err);
+  }
+};
 
 
-export async function clearUserData(){
-    try{
-        await AsyncStorage.removeItem('userData');
-    } catch(e){
-        console.log('clear error:',e)
-    }
-}
+export const getUserData = async () => {
+  try {
+    const value = await AsyncStorage.getItem(USER_DATA_KEY);
+    return value ? JSON.parse(value) : null;
+  } catch (err) {
+    console.log('Error reading user data:', err);
+    return null;
+  }
+};
+
+
+
