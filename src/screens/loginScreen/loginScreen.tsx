@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -11,6 +11,9 @@ import LoginBtn from '../../components/btn/LoginButton';
 import React from 'react';
 import Toast from 'react-native-toast-message';
 import { saveUserData, getUserData } from '../../utils/helpers/storage'; 
+import { useTranslation } from 'react-i18next';
+import i18n from '../../locals/i18n';
+
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string()
@@ -25,11 +28,11 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
+  const { t } = useTranslation();
+
   const { mutate: login, isPending } = useLogin(
     async data => {
       try {
-        console.log("API response:", data);
-
         await saveUserData({
           mobile: data.mobile,
           password: data.password,
@@ -45,7 +48,7 @@ export default function LoginScreen() {
     err => {
       Toast.show({
         type: 'error',
-        text1: 'Login Failed',
+        text1: 'loginFailed',
         text2: err.message,
         position: 'bottom',
         visibilityTime: 4000,
@@ -55,7 +58,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>{t('login')}</Text>
 
       <Formik
         initialValues={{ username: '', password: '' }}
@@ -64,12 +67,12 @@ export default function LoginScreen() {
           login({ mobile: values.username, password: values.password });
         }}
       >
-        {({handleChange,handleBlur,handleSubmit,values,errors,touched,isValid,dirty, }) => (
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, dirty }) => (
           <>
             <View style={styles.formCont}>
               <FormInput
-                label="Mobile Number"
-                placeholder="Enter your mobile number"
+                label={t('Mobile Number')}
+                placeholder={t('Enter your mobile number')}
                 value={values.username}
                 onChangeText={handleChange('username')}
                 onBlur={handleBlur('username')}
@@ -77,8 +80,8 @@ export default function LoginScreen() {
                 touched={touched.username}
               />
               <FormInput
-                label="Password"
-                placeholder="Enter your password"
+                label={t('Password')}
+                placeholder={t('Enter your password')}
                 value={values.password}
                 onChangeText={handleChange('password')}
                 onBlur={handleBlur('password')}
@@ -89,14 +92,42 @@ export default function LoginScreen() {
             </View>
 
             <LoginBtn
-              title="Login"
+              title={t('login')}
               onPress={() => handleSubmit()}
               loading={isPending}
               disabled={!isValid || !dirty || isPending}
             />
+
+
+            <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'center' }}>
+              <TouchableOpacity
+                onPress={() => i18n.changeLanguage('ar')}
+                style={{
+                  backgroundColor: 'gold',
+                  paddingVertical: 5,
+                  paddingHorizontal: 10,
+                  marginHorizontal: 5,
+                }}
+              >
+                <Text style={{ fontSize: 12 }}>عربي</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => i18n.changeLanguage('en')}
+                style={{
+                  backgroundColor: 'gold',
+                  paddingVertical: 4,
+                  paddingHorizontal: 10,
+                  marginHorizontal: 5,
+                }}
+              >
+                <Text style={{ fontSize: 12 }}>English</Text>
+              </TouchableOpacity>
+            </View>
           </>
         )}
       </Formik>
     </View>
   );
 }
+
