@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -7,13 +7,12 @@ import { MainStackParamList } from '../../navigation/mainStack';
 import styles from './styles';
 import { useLogin } from '../../utils/helpers/useLogin';
 import FormInput from '../../components/formInput/FormInput';
-import LoginBtn from '../../components/btn/LoginButton';
-import React from 'react';
+import CustomBtn from '../../components/btn/CustomBtn';
+import React, { useState } from 'react';
 import Toast from 'react-native-toast-message';
 import { saveUserData, getUserData } from '../../utils/helpers/storage'; 
 import { useTranslation } from 'react-i18next';
 import i18n from '../../locals/i18n';
-
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string()
@@ -30,9 +29,22 @@ export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
   const { t } = useTranslation();
 
+  const [currentLang, setCurrentLang] = useState(i18n.language);
+
+  const toggleLanguage = () => {
+    if (currentLang === 'ar') {
+      i18n.changeLanguage('en');
+      setCurrentLang('en');
+    } else {
+      i18n.changeLanguage('ar');
+      setCurrentLang('ar');
+    }
+  };
+
   const { mutate: login, isPending } = useLogin(
     async data => {
       try {
+        console.log("API response:", data);
         await saveUserData({
           mobile: data.mobile,
           password: data.password,
@@ -58,6 +70,24 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
+        <CustomBtn onPress={toggleLanguage}>
+          <Image
+            source={{
+              uri:
+                currentLang === 'ar'
+                  ? 'https://flagcdn.com/w40/eg.png'
+                  : 'https://flagcdn.com/w40/us.png',
+            }}
+            style={{ width: 25, height: 10,}}
+            resizeMode="contain"
+          />
+          <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
+            {currentLang === 'ar' ? 'العربية' : 'English'}
+          </Text>
+        </CustomBtn>
+      </View>
+
       <Text style={styles.title}>{t('login')}</Text>
 
       <Formik
@@ -91,43 +121,15 @@ export default function LoginScreen() {
               />
             </View>
 
-            <LoginBtn
+            <CustomBtn
               title={t('login')}
               onPress={() => handleSubmit()}
               loading={isPending}
               disabled={!isValid || !dirty || isPending}
             />
-
-
-            <View style={{ flexDirection: 'row', marginTop: 15, justifyContent: 'center' }}>
-              <TouchableOpacity
-                onPress={() => i18n.changeLanguage('ar')}
-                style={{
-                  backgroundColor: 'gold',
-                  paddingVertical: 5,
-                  paddingHorizontal: 10,
-                  marginHorizontal: 5,
-                }}
-              >
-                <Text style={{ fontSize: 12 }}>عربي</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => i18n.changeLanguage('en')}
-                style={{
-                  backgroundColor: 'gold',
-                  paddingVertical: 4,
-                  paddingHorizontal: 10,
-                  marginHorizontal: 5,
-                }}
-              >
-                <Text style={{ fontSize: 12 }}>English</Text>
-              </TouchableOpacity>
-            </View>
           </>
         )}
       </Formik>
     </View>
   );
 }
-

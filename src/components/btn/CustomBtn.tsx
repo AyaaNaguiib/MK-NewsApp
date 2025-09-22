@@ -1,16 +1,17 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { GestureResponderEvent, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { fonts } from "../../utils/constants";
 
-interface LoginBtnProps {
-  title: string;
+interface customBtnProps {
+  title?: string;
   onPress: (Event: GestureResponderEvent) => void;
   loading?: boolean;
   disabled?: boolean;
+  children?: ReactNode; 
 }
 
-export default function LoginBtn({ title, onPress, loading, disabled }: LoginBtnProps) {
+export default function customBtn({ title, onPress, loading, disabled, children }: customBtnProps) {
   return (
     <Button
       onPress={onPress}
@@ -18,8 +19,9 @@ export default function LoginBtn({ title, onPress, loading, disabled }: LoginBtn
       disabled={disabled}
       style={[styles.button, disabled ? styles.buttonDisabled : styles.buttonEnabled]}
       labelStyle={styles.text}
+      contentStyle={{ flexDirection: "row" }} 
     >
-      {title}
+      {children ? children : title}
     </Button>
   );
 }
@@ -30,10 +32,10 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   buttonEnabled: {
-    backgroundColor: "gold", 
+    backgroundColor: "gold",
   },
   buttonDisabled: {
-    backgroundColor: "rgba(255, 215, 0, 0.5)", 
+    backgroundColor: "rgba(255, 215, 0, 0.5)",
   },
   text: {
     fontFamily: fonts.CairoBold,
@@ -42,3 +44,4 @@ const styles = StyleSheet.create({
     color: "#000",
   },
 });
+
