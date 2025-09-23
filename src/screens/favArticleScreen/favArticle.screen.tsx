@@ -1,4 +1,3 @@
-
 import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
 import React from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';

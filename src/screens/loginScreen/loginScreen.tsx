@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native';
+ import { View, Text, Image } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -45,10 +45,8 @@ export default function LoginScreen() {
     async data => {
       try {
         console.log("API response:", data);
-        await saveUserData({
-          mobile: data.mobile,
-          password: data.password,
-        });
+        await saveUserData(data);
+
         const storedUser = await getUserData();
         console.log("Stored user in AsyncStorage:", storedUser);
 
@@ -79,7 +77,7 @@ export default function LoginScreen() {
                   ? 'https://flagcdn.com/w40/eg.png'
                   : 'https://flagcdn.com/w40/us.png',
             }}
-            style={{ width: 25, height: 10,}}
+            style={{ width: 25, height: 10 }}
             resizeMode="contain"
           />
           <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
@@ -133,3 +131,4 @@ export default function LoginScreen() {
     </View>
   );
 }
+
