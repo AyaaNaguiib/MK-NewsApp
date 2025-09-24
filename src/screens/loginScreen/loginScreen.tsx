@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, I18nManager } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -40,6 +40,12 @@ export default function LoginScreen() {
 
     await i18n.changeLanguage(newLang);
     setCurrentLang(newLang);
+
+    if (newLang === 'ar') {
+    I18nManager.forceRTL(true);
+  } else {
+    I18nManager.forceRTL(false);
+  }
 
     RNRestart.restart();
   };
