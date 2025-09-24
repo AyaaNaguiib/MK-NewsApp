@@ -1,4 +1,4 @@
- import { View, Text, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -13,6 +13,8 @@ import Toast from 'react-native-toast-message';
 import { saveUserData, getUserData } from '../../utils/helpers/storage'; 
 import { useTranslation } from 'react-i18next';
 import i18n from '../../locals/i18n';
+import RNRestart from 'react-native-restart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string()
@@ -31,14 +33,15 @@ export default function LoginScreen() {
 
   const [currentLang, setCurrentLang] = useState(i18n.language);
 
-  const toggleLanguage = () => {
-    if (currentLang === 'ar') {
-      i18n.changeLanguage('en');
-      setCurrentLang('en');
-    } else {
-      i18n.changeLanguage('ar');
-      setCurrentLang('ar');
-    }
+  const toggleLanguage = async () => {
+    const newLang = currentLang === 'ar' ? 'en' : 'ar';
+
+    await AsyncStorage.setItem('APP_LANGUAGE', newLang);
+
+    await i18n.changeLanguage(newLang);
+    setCurrentLang(newLang);
+
+    RNRestart.restart();
   };
 
   const { mutate: login, isPending } = useLogin(
@@ -68,20 +71,21 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
         <CustomBtn onPress={toggleLanguage}>
           <Image
             source={{
               uri:
                 currentLang === 'ar'
-                  ? 'https://flagcdn.com/w40/eg.png'
-                  : 'https://flagcdn.com/w40/us.png',
+                  ? 'https://flagcdn.com/w40/us.png' 
+                  : 'https://flagcdn.com/w40/eg.png', 
             }}
             style={{ width: 25, height: 10 }}
             resizeMode="contain"
           />
           <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
-            {currentLang === 'ar' ? 'العربية' : 'English'}
+            {currentLang === 'ar' ? 'English' : 'العربية'}
           </Text>
         </CustomBtn>
       </View>
@@ -131,4 +135,3 @@ export default function LoginScreen() {
     </View>
   );
 }
-
