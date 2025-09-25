@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const USER_DATA_KEY = 'userData';
+const APP_LANGUAGE_KEY = 'APP_LANGUAGE';
 
 export const saveUserData = async (data: any) => {
   try {
@@ -16,6 +17,23 @@ export const getUserData = async () => {
     return value ? JSON.parse(value) : null;
   } catch (err) {
     console.log('Error reading user data:', err);
+    return null;
+  }
+};
+
+export const saveAppLanguage = async (lang: 'en' | 'ar') => {
+  try {
+    await AsyncStorage.setItem(APP_LANGUAGE_KEY, lang);
+  } catch (err) {
+    console.log('Error saving app language:', err);
+  }
+};
+
+export const getAppLanguage = async () => {
+  try {
+    return await AsyncStorage.getItem(APP_LANGUAGE_KEY);
+  } catch (err) {
+    console.log('Error reading app language:', err);
     return null;
   }
 };

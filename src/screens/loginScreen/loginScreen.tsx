@@ -1,4 +1,4 @@
-import { View, Text, Image, I18nManager } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -10,11 +10,9 @@ import FormInput from '../../components/formInput/FormInput';
 import CustomBtn from '../../components/btn/CustomBtn';
 import React, { useState } from 'react';
 import Toast from 'react-native-toast-message';
-import { saveUserData, getUserData } from '../../utils/helpers/storage'; 
+import { saveUserData, getUserData } from '../../utils/helpers/storage';
 import { useTranslation } from 'react-i18next';
-import i18n from '../../locals/i18n';
-import RNRestart from 'react-native-restart';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n, { changeAppLanguage } from '../../locals/i18n';
 
 const LoginSchema = Yup.object().shape({
   username: Yup.string()
@@ -35,19 +33,8 @@ export default function LoginScreen() {
 
   const toggleLanguage = async () => {
     const newLang = currentLang === 'ar' ? 'en' : 'ar';
-
-    await AsyncStorage.setItem('APP_LANGUAGE', newLang);
-
-    await i18n.changeLanguage(newLang);
+    await changeAppLanguage(newLang);  
     setCurrentLang(newLang);
-
-    if (newLang === 'ar') {
-    I18nManager.forceRTL(true);
-  } else {
-    I18nManager.forceRTL(false);
-  }
-
-    RNRestart.restart();
   };
 
   const { mutate: login, isPending } = useLogin(
@@ -84,8 +71,8 @@ export default function LoginScreen() {
             source={{
               uri:
                 currentLang === 'ar'
-                  ? 'https://flagcdn.com/w40/us.png' 
-                  : 'https://flagcdn.com/w40/eg.png', 
+                  ? 'https://flagcdn.com/w40/us.png'
+                  : 'https://flagcdn.com/w40/eg.png',
             }}
             style={{ width: 25, height: 10 }}
             resizeMode="contain"
@@ -141,3 +128,4 @@ export default function LoginScreen() {
     </View>
   );
 }
+

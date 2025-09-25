@@ -1,9 +1,12 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as RNLocalize from 'react-native-localize';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { I18nManager } from 'react-native';
+import RNRestart from 'react-native-restart';
+
 import en from './en.json';
 import ar from './ar.json';
+import { getAppLanguage, saveAppLanguage } from '../utils/helpers/storage';
 
 const resources = {
   en: { translation: en },
@@ -11,10 +14,19 @@ const resources = {
 };
 
 const FALLBACK_LANG = 'en';
-const LANG_KEY = 'APP_LANGUAGE';
+
+function applyRTL(lang: 'en' | 'ar') {
+  if (lang === 'ar' && !I18nManager.isRTL) {
+    I18nManager.forceRTL(true);
+    RNRestart.restart();
+  } else if (lang === 'en' && I18nManager.isRTL) {
+    I18nManager.forceRTL(false);
+    RNRestart.restart();
+  }
+}
 
 async function initI18n() {
-  let lang = await AsyncStorage.getItem(LANG_KEY);
+  let lang = await getAppLanguage();
   if (!lang) {
     const deviceLang = RNLocalize.getLocales()[0]?.languageCode;
     lang = ['en', 'ar'].includes(deviceLang) ? deviceLang : FALLBACK_LANG;
@@ -26,13 +38,18 @@ async function initI18n() {
     fallbackLng: FALLBACK_LANG,
     interpolation: { escapeValue: false },
   });
+
+  applyRTL(lang as 'en' | 'ar');
 }
 
 initI18n();
 
 export const changeAppLanguage = async (lang: 'en' | 'ar') => {
-  await AsyncStorage.setItem(LANG_KEY, lang);
+  await saveAppLanguage(lang);
   await i18n.changeLanguage(lang);
+
+
+  applyRTL(lang);
 };
 
 export default i18n;
