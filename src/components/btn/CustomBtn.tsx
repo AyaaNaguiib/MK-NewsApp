@@ -1,27 +1,37 @@
 import React, { ReactNode } from "react";
-import { GestureResponderEvent, StyleSheet } from "react-native";
+import { GestureResponderEvent, StyleSheet, ViewStyle,StyleProp, TextStyle } from "react-native";
 import { Button } from "react-native-paper";
 import { fonts } from "../../utils/constants";
 
-interface customBtnProps {
+interface CustomBtnProps {
   title?: string;
-  onPress: (Event: GestureResponderEvent) => void;
+  onPress: (event?: GestureResponderEvent) => void;
   loading?: boolean;
   disabled?: boolean;
-  children?: ReactNode; 
+  children?: ReactNode;
+  style?: StyleProp<ViewStyle>;       
+   
 }
 
-export default function customBtn({ title, onPress, loading, disabled, children }: customBtnProps) {
+export default function CustomBtn({
+  title,
+  onPress,
+  loading = false,
+  disabled = false,
+  children,
+  style,
+
+}: CustomBtnProps) {
   return (
     <Button
       onPress={onPress}
       loading={loading}
       disabled={disabled}
-      style={[styles.button, disabled ? styles.buttonDisabled : styles.buttonEnabled]}
-      labelStyle={styles.text}
-      contentStyle={{ flexDirection: "row" }} 
+      style={[styles.button, disabled ? styles.buttonDisabled : styles.buttonEnabled, style]} 
+      contentStyle={[styles.content, ]}
+      labelStyle={[styles.text, ]}
     >
-      {children ? children : title}
+      {children ?? title}
     </Button>
   );
 }
@@ -30,6 +40,11 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 20,
     paddingVertical: 5,
+  },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonEnabled: {
     backgroundColor: "gold",

@@ -41,7 +41,10 @@ export default function LoginScreen() {
     async data => {
       try {
         console.log("API response:", data);
-        await saveUserData(data);
+       
+
+        const userWithRole = { ...data, role: 'user' };
+        await saveUserData(userWithRole);
 
         const storedUser = await getUserData();
         console.log("Stored user in AsyncStorage:", storedUser);
@@ -64,7 +67,6 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 20 }}>
         <CustomBtn onPress={toggleLanguage}>
           <Image
@@ -116,11 +118,22 @@ export default function LoginScreen() {
               />
             </View>
 
+         
             <CustomBtn
               title={t('login')}
               onPress={() => handleSubmit()}
               loading={isPending}
               disabled={!isValid || !dirty || isPending}
+            />
+
+     
+            <CustomBtn
+              title={t('Continue as Guest')}
+              onPress={async () => {
+                await saveUserData({ role: 'guest' });
+                navigation.navigate(StackNames.MainTabs);
+              }}
+              style={{ marginTop: 10 }}
             />
           </>
         )}
