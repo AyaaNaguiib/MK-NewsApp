@@ -6,6 +6,7 @@ import StackNames from "./stackNames";
 import AuthStack from "./stacks/auth.stack";
 import MainTabs from "./stacks/tabs/MainTabs";
 import ArticleDetails from "../screens/articleDetails/articleDetails";
+import LoginScreen from "../screens/loginScreen/loginScreen";
 
 const Stack = createStackNavigator<MainStackParamList>();
 
@@ -19,6 +20,10 @@ export default function MainStack() {
       <Stack.Screen name={StackNames.AuthStack} component={AuthStack} />
 
       <Stack.Screen name={StackNames.MainTabs} component={MainTabs} />
+<Stack.Screen
+        name={ScreenNames.LoginScreen}
+        component={LoginScreen}
+      />
 
       <Stack.Screen
         name={ScreenNames.ArticleDetails}
@@ -34,4 +39,5 @@ export type MainStackParamList = {
     article: ArticleType;
   };
   [ScreenNames.ArticleDetails]: { article: ArticleType };
+    [ScreenNames.LoginScreen]: undefined;
 };

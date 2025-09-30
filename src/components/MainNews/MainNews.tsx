@@ -3,13 +3,16 @@ import React, { useState, useEffect } from 'react'
 import styles from './styles';
 import axios from 'axios';
 import { ArticleType } from '../types/articleType'
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import ScreenNames from '../../navigation/screenNames';
 import { MainStackParamList } from '../../navigation/mainStack';
+import { clearUserData } from '../../utils/helpers/storage';  
+import StackNames from '../../navigation/stackNames';           
+import CustomBtn from '../../components/btn/CustomBtn';         
 
 export default function MainNews() {
   const [topNews, setTopNews] = useState<ArticleType[]>([]);
-  const { navigate } = useNavigation<NavigationProp<MainStackParamList>>();
+  const navigation = useNavigation<NavigationProp<MainStackParamList>>();
 
   useEffect(() => {
     getTopNews();
@@ -18,7 +21,6 @@ export default function MainNews() {
   function getTopNews() {
     const url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=44e407194254430b9151b1945e494407";
     axios.get(url).then(res => {
-      console.log(res.data);
       const articles = res.data?.articles?.filter(
         (article: ArticleType) => article?.urlToImage !== null,
       );
@@ -30,7 +32,7 @@ export default function MainNews() {
   }
 
   function gotoArticlesDetails(article: ArticleType) {
-    navigate(ScreenNames.ArticleDetails, { article }); 
+    navigation.navigate(ScreenNames.ArticleDetails, { article }); 
   }
 
   function renderNews(item: ArticleType) {
@@ -65,8 +67,18 @@ export default function MainNews() {
     setTopNews(prevNews => [...prevNews, newArticle as ArticleType]);
   }
 
+async function handleLogout() {
+  await clearUserData();
+  navigation.dispatch(
+    CommonActions.reset({
+      index: 0,
+      routes: [{ name: StackNames.LoginScreen }], 
+    })
+  );
+}
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <FlatList
         data={topNews}
         renderItem={({ item }) => renderNews(item)}
@@ -75,11 +87,16 @@ export default function MainNews() {
         pagingEnabled
         contentContainerStyle={styles.listContainer}
       />
+
       <TouchableOpacity onPress={addArticle}>
         <Text>Add Article</Text>
       </TouchableOpacity>
+
+      <CustomBtn 
+  title="Logout"
+  onPress={handleLogout}
+  style={{ marginTop: 20, alignSelf: "center", width: 150 }}
+/>
     </View>
   );
-} 
-
-
+}

@@ -1,5 +1,5 @@
 import { View, Text, Image } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import StackNames from '../../navigation/stackNames';
@@ -8,7 +8,7 @@ import styles from './styles';
 import { useLogin } from '../../utils/helpers/useLogin';
 import FormInput from '../../components/formInput/FormInput';
 import CustomBtn from '../../components/btn/CustomBtn';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 import { saveUserData, getUserData } from '../../utils/helpers/storage';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +31,25 @@ export default function LoginScreen() {
 
   const [currentLang, setCurrentLang] = useState(i18n.language);
 
+  
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = await getUserData();
+      console.log("Auto login check, stored user:", user);
+
+      if (user) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: StackNames.MainTabs }],
+          })
+        );
+      }
+    };
+
+    checkUser();
+  }, [navigation]);
+
   const toggleLanguage = async () => {
     const newLang = currentLang === 'ar' ? 'en' : 'ar';
     await changeAppLanguage(newLang);  
@@ -42,14 +61,18 @@ export default function LoginScreen() {
       try {
         console.log("API response:", data);
        
-
         const userWithRole = { ...data, role: 'user' };
         await saveUserData(userWithRole);
 
         const storedUser = await getUserData();
         console.log("Stored user in AsyncStorage:", storedUser);
 
-        navigation.navigate(StackNames.MainTabs);
+        navigation.dispatch(
+          CommonActions.reset({
+            index:0,
+            routes:[{name: StackNames.MainTabs}]
+          })
+        );
       } catch (err) {
         console.log('Storage error:', err);
       }
@@ -118,7 +141,6 @@ export default function LoginScreen() {
               />
             </View>
 
-         
             <CustomBtn
               title={t('login')}
               onPress={() => handleSubmit()}
@@ -126,12 +148,16 @@ export default function LoginScreen() {
               disabled={!isValid || !dirty || isPending}
             />
 
-     
             <CustomBtn
               title={t('Continue as Guest')}
               onPress={async () => {
                 await saveUserData({ role: 'guest' });
-                navigation.navigate(StackNames.MainTabs);
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index:0,
+                    routes:[{name: StackNames.MainTabs}],
+                  })
+                )
               }}
               style={{ marginTop: 10 }}
             />
@@ -141,4 +167,5 @@ export default function LoginScreen() {
     </View>
   );
 }
+
 

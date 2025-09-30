@@ -21,6 +21,16 @@ export const getUserData = async () => {
   }
 };
 
+export const clearUserData = async () => {
+  try {
+    await AsyncStorage.removeItem('userData');
+    console.log("User data cleared from storage");
+  } catch (e) {
+    console.log("Error clearing user data", e);
+  }
+};
+
+
 export const saveAppLanguage = async (lang: 'en' | 'ar') => {
   try {
     await AsyncStorage.setItem(APP_LANGUAGE_KEY, lang);
