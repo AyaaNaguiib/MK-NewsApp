@@ -32,23 +32,7 @@ export default function LoginScreen() {
   const [currentLang, setCurrentLang] = useState(i18n.language);
 
   
-  useEffect(() => {
-    const checkUser = async () => {
-      const user = await getUserData();
-      console.log("Auto login check, stored user:", user);
-
-      if (user) {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: StackNames.MainTabs }],
-          })
-        );
-      }
-    };
-
-    checkUser();
-  }, [navigation]);
+ 
 
   const toggleLanguage = async () => {
     const newLang = currentLang === 'ar' ? 'en' : 'ar';
